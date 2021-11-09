@@ -1,54 +1,49 @@
-from pprint import pprint
+import csv
 import re
 
-import csv
 
-with open("phonebook_raw.csv", encoding='UTF-8') as f:
-  rows = csv.reader(f, delimiter=",")
-  contacts_list = list(rows)
+def get_right_names(phonebook):
+    pattern = r'^(\w+)[,\s](\w+)[,\s](\w+|,)'
+    subst = r'\1,\2,\3'
+    book = []
+    for item in phonebook:
+        book.append(re.sub(pattern, subst, item))
+    return book
 
-
-
-new_list = []
-# создаем новый список, в который будем записывать изменения исходного файла
-
-for stri in contacts_list:
-  pattern = r"(\w+)[\s,*](\w+)[\s,*](\w+)"
-
-  text = str(stri)
-  subst = r"\1,\2,\3"
-
-  result = re.sub(pattern, subst, text)
-  new_list.append((result))
-# создаем регулярку для выравнивания ФИО
+def get_right_phones(phonebook):
+    pattern = r'[+78][\s(]{0,2}(\d\d\d)[)\s-]{0,2}(\d\d\d)[\s-]{0,2}(\d\d)[-\s]{0,2}(\d\d)[\s,]'
+    subst = r'+7(\1)\2-\3-\4,'
+    book = []
+    for item in phonebook:
+        book.append(re.sub(pattern, subst, item))
+    return book
 
 
-for string in contacts_list:
-  pattern = r"(\+7\s*|8)(\s*|\()(\d\d\d)(\)|\s*|-)\s*(\d\d\d)(\s*|-)(\d\d)(\s*|-)(\d\d)(,|\s|)"
-
-  text = str(string)
-  subst = r"+7(\3)\5-\7-\9"
-
-  result = re.sub(pattern, subst, text)
-  new_list.append((result))
-# создаем регулярку для выравнивания телефонов
+def main():
 
 
-for string in contacts_list:
-  pattern = r"((\s|\s*\()(доб. )(\d+)(\s*|\))"
+    with open('phonebook_raw.csv', newline='', encoding='UTF-8') as csvfile:
+        book = []
+        for line in csvfile:
+            book.append((line).strip())
 
-  text = str(string)
-  subst = r" доб.\3"
+    for i in book:
+        print(i)
+    book_with_right_names = get_right_names(book)
 
-  result = re.sub(pattern, subst, text)
-  new_list.append((result))
-# создаем регулярку для прибавления добавочного номера
+    print('-'*50)
+
+    for i in book_with_right_names:
+        print(i)
+
+    book_with_right_phones = get_right_phones(book_with_right_names)
+
+    print('-' * 50)
+
+    for i in book_with_right_phones:
+        print(i)
 
 
-with open("phonebook_new.csv", "w") as f:
-  datawriter = csv.writer(f, delimiter=',')
+if __name__ == '__main__':
 
-  datawriter.writerows(new_list)
-
-#записываем получившиеся данные в новый файл CSV
-
+    main()
