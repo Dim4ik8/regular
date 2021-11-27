@@ -1,5 +1,6 @@
 import csv
 import re
+import os
 
 
 def get_right_phones(phonebook):
@@ -89,6 +90,8 @@ def main():
         f.writelines([line + '\n' for line in book_with_right_phones])
 
     read_write('right_phone_book.csv')
+
+    os.remove(('right_phone_book.csv'))
 
 
 if __name__ == '__main__':
